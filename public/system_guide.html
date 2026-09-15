@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CardioTwin System Architecture & Drug Incorporation Guide</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #131d33;
+      --card-border: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #06b6d4;
+      --accent-glow: rgba(6, 182, 212, 0.15);
+      --accent-emerald: #10b981;
+      --accent-indigo: #6366f1;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --code-bg: #070b14;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      padding: 32px 16px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(6, 182, 212, 0.4);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent-glow);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 800;
+      border: 1px solid var(--accent);
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    p strong {
+      color: var(--text-main);
+    }
+
+    .highlight-box {
+      background: rgba(6, 182, 212, 0.05);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+
+    .highlight-box h3 {
+      font-size: 16px;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    pre, code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      overflow-x: auto;
+      color: #38bdf8;
+      margin: 16px 0;
+      line-height: 1.5;
+    }
+
+    .comment { color: #64748b; }
+    .keyword { color: #f43f5e; }
+    .string { color: #34d399; }
+    .number { color: #f59e0b; }
+
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .tag-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    .tag-item .name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .tag-item .desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .calc-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 32px 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="number"] {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-main);
+      font-size: 14px;
+    }
+
+    .input-group input[type="range"] {
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .result-box {
+      background: var(--code-bg);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-val {
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    .val-emerald { color: var(--accent-emerald); }
+    .val-cyan { color: var(--accent); }
+    .val-amber { color: var(--accent-amber); }
+
+    footer {
+      text-align: center;
+      padding: 32px 16px;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">CardioTwin Research Framework</div>
+      <h1>How the Full Digital Twin System Works</h1>
+      <p class="subtitle">
+        A simple, plain-language guide explaining how physiological simulation works, how new pharmaceutical drugs are incorporated, and what clinical outcomes are produced.
+      </p>
+    </header>
+
+    <!-- SECTION 1: HOW THE FULL SYSTEM WORKS -->
+    <section>
+      <div class="highlight-box">
+        <h3>💡 Executive Summary</h3>
+        <p>
+          A <strong>Cardiovascular Digital Twin</strong> creates a computer replica of a patient's heart and arteries. Instead of giving a patient multiple drugs over several years to see what happens, we test the treatments inside the computer simulation first. In less than a second, the system predicts how much the patient's risk of heart attacks, strokes, and blocked arteries will decline.
+        </p>
+      </div>
+
+      <h2 style="margin-bottom: 16px; font-size: 22px;">1. The 4-Step Simulation Pipeline</h2>
+      <div class="grid">
+        <!-- Step 1 -->
+        <div class="card">
+          <div class="card-title">
+            <span class="step-number">1</span>
+            <span>Digital Twin Creation</span>
+          </div>
+          <p>
+            We take the patient's real medical biomarkers: <strong>Age, Blood Pressure, LDL Cholesterol, HDL, Triglycerides, ApoB, Lp(a), Blood Sugar, Kidney function (eGFR),</strong> and <strong>Coronary Artery Calcium (CAC)</strong>.
+          </p>
+          <p>
+            These form the unique multi-dimensional fingerprint of the patient's cardiovascular system.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card">
+          <div class="card-title">
+            <span class="step-number">2</span>
+            <span>Baseline Risk Engine</span>
+          </div>
+          <p>
+            Using clinical guidelines (ACC/AHA Pooled Cohort Equations & AHA PREVENT), the system calculates the patient's baseline 10-year risk of having a heart attack or stroke if <strong>no new treatment</strong> is started.
+          </p>
+          <p>
+            It also calculates their <strong>Biological Vascular Age</strong> (how old their arteries behave).
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card">
+          <div class="card-title">
+            <span class="step-number">3</span>
+            <span>Counterfactual Simulation</span>
+          </div>
+          <p>
+            "Counterfactual" means: <em>"What would happen if we gave this patient Drug A + Drug B?"</em>
+          </p>
+          <p>
+            The computer applies proven clinical trial response factors (e.g. High-Intensity Statin = -52% LDL, Ezetimibe = -19% residual LDL, PCSK9i = -58% LDL) to predict the new biomarker state.
+          </p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card">
+          <div class="card-title">
+            <span class="step-number">4</span>
+            <span>Real-Time Remodeling</span>
+          </div>
+          <p>
+            The engine calculates the new risk, the absolute risk drop (ARR), and the <strong>Number Needed to Treat (NNT)</strong>.
+          </p>
+          <p>
+            It also generates 3D arterial cross-sections showing plaque regression and 10-year Kaplan-Meier survival trajectories.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: HOW TO INCORPORATE NEW DRUGS -->
+    <section style="margin-top: 40px;">
+      <h2 style="margin-bottom: 16px; font-size: 22px;">2. How We Incorporate New Drugs</h2>
+      <p>
+        Adding a newly discovered or experimental drug (such as Phase 2/3 clinical trial candidates) requires defining only <strong>three core mathematical parameters</strong>:
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-title" style="color: var(--accent);">Biomarker Delta (Δ)</div>
+          <p>The exact percentage by which the drug lowers specific blood markers based on trial data:</p>
+          <ul style="padding-left: 20px; font-size: 13px; color: var(--text-muted);">
+            <li><strong>LDL-C Reduction:</strong> e.g., -45% for Obicetrapib</li>
+            <li><strong>Lp(a) Reduction:</strong> e.g., -80% for Pelacarsen / Olpasiran</li>
+            <li><strong>SBP Reduction:</strong> e.g., -8 mmHg for ARBs</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-indigo);">Clinical Hazard Ratio (HR)</div>
+          <p>The overall reduction in Major Adverse Cardiac Events (MACE):</p>
+          <ul style="padding-left: 20px; font-size: 13px; color: var(--text-muted);">
+            <li><strong>CTT Meta-Analysis Law:</strong> 22% MACE drop per 38.67 mg/dL (1 mmol/L) LDL drop (HR = 0.78).</li>
+            <li><strong>Non-LDL Pathway:</strong> Additional risk reduction (e.g. REDUCE-IT 25% drop for Icosapent Ethyl).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-emerald);">Target Eligibility Filter</div>
+          <p>Rules determining which patient phenotypes benefit from the drug:</p>
+          <ul style="padding-left: 20px; font-size: 13px; color: var(--text-muted);">
+            <li>Statin intolerance</li>
+            <li>Elevated Triglycerides &ge; 150 mg/dL</li>
+            <li>High genetic Lp(a) &ge; 125 nmol/L</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="highlight-box" style="background: var(--code-bg);">
+        <h3 style="color: var(--text-main);">TypeScript Implementation Snippet</h3>
+        <pre><span class="comment">// Example: Adding Obicetrapib (CETP Inhibitor) and Pelacarsen (siRNA)</span>
+<span class="keyword">if</span> (counterfactual.obicetrapib) {
+  <span class="comment">// 45% multiplicative reduction in LDL-C (from BROADWAY Trial)</span>
+  ldlMultiplier *= (<span class="number">1</span> - <span class="number">0.45</span>);
+}
+
+<span class="keyword">if</span> (counterfactual.pelacarsen) {
+  <span class="comment">// 80% reduction in genetic Lipoprotein(a) (from HORIZON Trial)</span>
+  projectedLpa *= (<span class="number">1</span> - <span class="number">0.80</span>);
+}
+
+<span class="comment">// Compute new 10-Year ASCVD Risk via Cholesterol Treatment Trialists formula</span>
+<span class="keyword">const</span> ldlDropMmol = (baselineLdl - projectedLdl) / <span class="number">38.67</span>;
+<span class="keyword">const</span> hazardRatio = Math.pow(<span class="number">0.78</span>, ldlDropMmol);
+<span class="keyword">const</span> newRisk = baselineRisk * hazardRatio;</pre>
+      </div>
+
+      <h3 style="margin-top: 24px; font-size: 16px;">Emerging Pipeline Drug Classes</h3>
+      <div class="tag-grid">
+        <div class="tag-item">
+          <div class="name">Obicetrapib</div>
+          <div class="desc">Oral CETP inhibitor lowering LDL-C by 45% on top of statins.</div>
+        </div>
+        <div class="tag-item">
+          <div class="name">Pelacarsen / Olpasiran</div>
+          <div class="desc">siRNA/Antisense lowering genetic Lp(a) by 80-95%.</div>
+        </div>
+        <div class="tag-item">
+          <div class="name">Inclisiran</div>
+          <div class="desc">Twice-yearly siRNA PCSK9 inhibitor lowering LDL-C by 54%.</div>
+        </div>
+        <div class="tag-item">
+          <div class="name">Tirzepatide</div>
+          <div class="desc">Dual GIP/GLP-1 lowering weight by 20% and improving metabolic profile.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: WHAT IS THE OUTCOME -->
+    <section style="margin-top: 40px;">
+      <h2 style="margin-bottom: 16px; font-size: 22px;">3. What Are the Outcomes of This System?</h2>
+      <p>
+        The digital twin produces <strong>6 critical quantitative and visual outcomes</strong> for clinical decision support:
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-title" style="color: var(--accent);">1. Absolute Risk Reduction (ARR)</div>
+          <p>
+            The direct percentage point drop in 10-year heart attack risk.<br />
+            <strong>Example:</strong> If risk drops from <strong>26%</strong> to <strong>8%</strong>, the <strong>ARR = 18%</strong>.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-indigo);">2. Relative Risk Reduction (RRR)</div>
+          <p>
+            The fraction of baseline risk successfully eliminated.<br />
+            <strong>Example:</strong> An 18% drop on a 26% baseline is a <strong>69.2% Relative Risk Reduction</strong>.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-amber);">3. Number Needed to Treat (NNT)</div>
+          <p>
+            How many similar patients must be treated for 10 years to prevent <strong>one</strong> heart attack or cardiovascular death.<br />
+            <strong>Example:</strong> NNT = 100 / 18 = <strong>5.5 patients</strong>.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-emerald);">4. Vascular Age Rejuvenation</div>
+          <p>
+            Translates complex statistics into biological heart age.<br />
+            <strong>Example:</strong> Rejuvenating a 52-year-old patient's vascular age from <strong>67 years down to 53 years</strong>.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-rose);">5. Arterial Plaque Remodeling</div>
+          <p>
+            Visualizes coronary cross-sections: lipid core shrinking, fibrous cap thickening, and arterial lumen widening from <strong>55% stenosis to 25% stenosis</strong>.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: #a855f7;">6. Kaplan-Meier Survival Curves</div>
+          <p>
+            10-year time-horizon curves demonstrating cumulative event-free survival across years 0 through 10.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: INTERACTIVE DRUG TESTING CALCULATOR -->
+    <section class="calc-container">
+      <h2 style="font-size: 20px; margin-bottom: 8px;">4. Interactive Drug Effect Sandbox</h2>
+      <p>Test any hypothetical drug's effect right now in your browser:</p>
+
+      <div class="calc-grid">
+        <div class="input-group">
+          <label>Drug Name / Molecule:</label>
+          <input type="text" id="calcDrugName" value="Experimental CETP + siRNA" />
+        </div>
+
+        <div class="input-group">
+          <label>Baseline Patient 10-Yr Risk (%):</label>
+          <input type="number" id="calcBaseRisk" value="24.0" step="0.5" min="1" max="90" />
+        </div>
+
+        <div class="input-group">
+          <label>Baseline LDL-C (mg/dL):</label>
+          <input type="number" id="calcBaseLDL" value="165" min="40" max="400" />
+        </div>
+
+        <div class="input-group">
+          <label>Drug LDL Reduction (%): <span id="ldlPercentLabel" style="color: var(--accent); font-weight: bold;">-50%</span></label>
+          <input type="range" id="calcLdlDrop" min="0" max="85" step="5" value="50" />
+        </div>
+      </div>
+
+      <div class="result-box" style="margin-top: 20px;">
+        <div style="font-weight: 700; font-size: 15px; margin-bottom: 12px; color: var(--accent);" id="resDrugTitle">
+          Calculated Outcome for Experimental CETP + siRNA:
+        </div>
+        <div class="metric-row">
+          <span>Projected New LDL-C:</span>
+          <span class="metric-val val-cyan" id="resNewLdl">83 mg/dL (-82 mg/dL)</span>
+        </div>
+        <div class="metric-row">
+          <span>Simulated 10-Year ASCVD Risk:</span>
+          <span class="metric-val val-emerald" id="resNewRisk">9.8% (down from 24.0%)</span>
+        </div>
+        <div class="metric-row">
+          <span>Absolute Risk Reduction (ARR):</span>
+          <span class="metric-val val-emerald" id="resArr">14.2%</span>
+        </div>
+        <div class="metric-row">
+          <span>Relative Risk Reduction (RRR):</span>
+          <span class="metric-val val-cyan" id="resRrr">59.2%</span>
+        </div>
+        <div class="metric-row">
+          <span>Number Needed to Treat (NNT):</span>
+          <span class="metric-val val-amber" id="resNnt">7 patients</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      CardioTwin In Silico Digital Twin Framework · Grounded in ACC/AHA, ESC, and CTT Meta-Analyses
+    </footer>
+  </div>
+
+  <script>
+    function updateCalc() {
+      const drugName = document.getElementById("calcDrugName").value || "Hypothetical Compound";
+      const baseRisk = parseFloat(document.getElementById("calcBaseRisk").value) || 20.0;
+      const baseLdl = parseFloat(document.getElementById("calcBaseLDL").value) || 160;
+      const ldlDropPercent = parseFloat(document.getElementById("calcLdlDrop").value) || 0;
+
+      document.getElementById("ldlPercentLabel").innerText = "-" + ldlDropPercent + "%";
+
+      const newLdl = Math.max(15, Math.round(baseLdl * (1 - ldlDropPercent / 100)));
+      const ldlDelta = baseLdl - newLdl;
+      const ldlMmol = ldlDelta / 38.67;
+      const hr = Math.pow(0.78, ldlMmol);
+
+      const newRisk = Math.max(0.4, Number((baseRisk * hr).toFixed(1)));
+      const arr = Math.max(0, Number((baseRisk - newRisk).toFixed(1)));
+      const rrr = Number(((arr / baseRisk) * 100).toFixed(1));
+      const nnt = arr > 0.1 ? Math.max(1, Math.round(100 / arr)) : "999+";
+
+      document.getElementById("resDrugTitle").innerText = "Calculated Outcome for " + drugName + ":";
+      document.getElementById("resNewLdl").innerText = newLdl + " mg/dL (-" + ldlDelta + " mg/dL)";
+      document.getElementById("resNewRisk").innerText = newRisk + "% (down from " + baseRisk + "%)";
+      document.getElementById("resArr").innerText = arr + "%";
+      document.getElementById("resRrr").innerText = rrr + "%";
+      document.getElementById("resNnt").innerText = nnt + " patients";
+    }
+
+    document.getElementById("calcDrugName").addEventListener("input", updateCalc);
+    document.getElementById("calcBaseRisk").addEventListener("input", updateCalc);
+    document.getElementById("calcBaseLDL").addEventListener("input", updateCalc);
+    document.getElementById("calcLdlDrop").addEventListener("input", updateCalc);
+
+    updateCalc();
+  </script>
+</body>
+</html>

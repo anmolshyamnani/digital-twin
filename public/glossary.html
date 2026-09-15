@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CardioTwin - Complete Clinical & Technical Medical Dictionary / Glossary</title>
+  <style>
+    :root {
+      --bg: #070d18;
+      --card-bg: #0f172a;
+      --card-border: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-cyan: #06b6d4;
+      --accent-cyan-glow: rgba(6, 182, 212, 0.15);
+      --accent-emerald: #10b981;
+      --accent-indigo: #818cf8;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --code-bg: #020617;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 32px 16px;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 16px 32px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 36px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 9999px;
+      background: var(--accent-cyan-glow);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto 20px;
+    }
+
+    /* Live Search & Filter Bar */
+    .search-container {
+      max-width: 580px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px 18px 12px 42px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .category-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .cat-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cat-btn:hover, .cat-btn.active {
+      background: var(--accent-cyan);
+      color: #020617;
+      border-color: var(--accent-cyan);
+    }
+
+    /* Section Styles */
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin: 40px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    /* Dictionary Term Card */
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .term-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .term-card:hover {
+      border-color: rgba(6, 182, 212, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .term-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .term-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .term-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+    }
+
+    .term-full-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      margin-bottom: 8px;
+    }
+
+    .term-meaning {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .term-shows {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    .term-shows strong {
+      color: var(--text-main);
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+
+    .term-normal-range {
+      margin-top: 8px;
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--accent-amber);
+    }
+
+    /* Tag Specific Colors */
+    .tag-biomarker { border-left-color: var(--accent-cyan); }
+    .tag-outcome { border-left-color: var(--accent-emerald); }
+    .tag-drug { border-left-color: var(--accent-indigo); }
+    .tag-concept { border-left-color: var(--accent-purple); }
+    .tag-imaging { border-left-color: var(--accent-rose); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 16px 20px;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">CardioTwin Medical Glossary</div>
+      <h1>Cardiovascular & Digital Twin Glossary</h1>
+      <p class="subtitle">
+        Every clinical biomarker, pharmaceutical term, mathematical metric, and visual outcome used across the system — explained in simple plain English with what it shows on your screen.
+      </p>
+
+      <!-- Live Search Box -->
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="glossarySearch"
+          class="search-input"
+          placeholder="Search any term (e.g. ApoB, ARR, NNT, CAC, PCSK9, Statin, Vascular Age)..."
+          oninput="filterTerms()"
+        />
+      </div>
+
+      <!-- Quick Category Filters -->
+      <div class="category-nav">
+        <button class="cat-btn active" onclick="filterCategory('all', this)">All (32 Terms)</button>
+        <button class="cat-btn" onclick="filterCategory('outcomes', this)">Clinical Outcomes (ARR, RRR, NNT)</button>
+        <button class="cat-btn" onclick="filterCategory('biomarkers', this)">Biomarkers & Lipids</button>
+        <button class="cat-btn" onclick="filterCategory('drugs', this)">Drugs & Medications</button>
+        <button class="cat-btn" onclick="filterCategory('concepts', this)">Digital Twin & System Concepts</button>
+        <button class="cat-btn" onclick="filterCategory('imaging', this)">Imaging & Physiology</button>
+      </div>
+    </header>
+
+    <!-- SECTION 1: CLINICAL OUTCOME METRICS -->
+    <section class="term-section" data-cat="outcomes">
+      <div class="section-title" style="color: var(--accent-emerald);">
+        <span>📊</span> 1. Core Clinical Outcome Metrics
+      </div>
+      <p class="section-desc">The key numbers and percentages calculated when you test a treatment.</p>
+
+      <div class="term-grid">
+        <!-- 1. ARR -->
+        <div class="term-card" data-keywords="arr absolute risk reduction percentage drop difference outcome">
+          <div>
+            <div class="term-header">
+              <div class="term-name">ARR</div>
+              <span class="term-badge">Outcome Metric</span>
+            </div>
+            <div class="term-full-name">Absolute Risk Reduction</div>
+            <div class="term-meaning">
+              The direct arithmetic percentage difference between the patient's baseline 10-year heart attack risk and their new risk with medication.
+            </div>
+          </div>
+          <div class="term-shows tag-outcome">
+            <strong>What It Shows on Screen:</strong>
+            If your baseline risk was <strong>25%</strong> and drops to <strong>7%</strong>, your ARR is <strong>18%</strong>. It tells you exactly how many percentage points of danger were eliminated.
+          </div>
+        </div>
+
+        <!-- 2. RRR -->
+        <div class="term-card" data-keywords="rrr relative risk reduction percentage proportional eliminated outcome">
+          <div>
+            <div class="term-header">
+              <div class="term-name">RRR</div>
+              <span class="term-badge">Outcome Metric</span>
+            </div>
+            <div class="term-full-name">Relative Risk Reduction</div>
+            <div class="term-meaning">
+              The percentage of the patient's original baseline risk that has been successfully wiped out by the intervention.
+            </div>
+          </div>
+          <div class="term-shows tag-outcome">
+            <strong>What It Shows on Screen:</strong>
+            An 18% risk drop from a 25% starting risk represents a <strong>72% Relative Risk Reduction</strong> (calculated as <code>(18 / 25) × 100%</code>).
+          </div>
+        </div>
+
+        <!-- 3. NNT -->
+        <div class="term-card" data-keywords="nnt number needed to treat patients saved lives outcome">
+          <div>
+            <div class="term-header">
+              <div class="term-name">NNT</div>
+              <span class="term-badge">Outcome Metric</span>
+            </div>
+            <div class="term-full-name">Number Needed to Treat</div>
+            <div class="term-meaning">
+              The number of identical patients a doctor needs to treat with this medication regimen for 10 years to prevent exactly <strong>ONE</strong> heart attack, stroke, or cardiovascular death.
+            </div>
+          </div>
+          <div class="term-shows tag-outcome">
+            <strong>What It Shows on Screen:</strong>
+            A lower number is much better! An <strong>NNT of 6</strong> means treating only 6 patients will save 1 life. (Formula: <code>100 / ARR</code>).
+          </div>
+        </div>
+
+        <!-- 4. 10-Year ASCVD Risk -->
+        <div class="term-card" data-keywords="10 year ascvd risk probability heart attack stroke outcome">
+          <div>
+            <div class="term-header">
+              <div class="term-name">10-Year ASCVD Risk</div>
+              <span class="term-badge">Outcome Metric</span>
+            </div>
+            <div class="term-full-name">10-Year Atherosclerotic Cardiovascular Disease Risk</div>
+            <div class="term-meaning">
+              The statistical probability (from 0% to 100%) that a patient will experience a fatal or non-fatal myocardial infarction (heart attack) or stroke over the next decade.
+            </div>
+          </div>
+          <div class="term-shows tag-outcome">
+            <strong>What It Shows on Screen:</strong>
+            Displayed in the main gauge dial. Categorized as Low (&lt;5%), Borderline (5-7.4%), Intermediate (7.5-19.9%), or High (&ge;20%).
+          </div>
+        </div>
+
+        <!-- 5. Biological Vascular Age -->
+        <div class="term-card" data-keywords="vascular age biological heart age rejuvenation years gained outcome">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Vascular Age</div>
+              <span class="term-badge">Outcome Metric</span>
+            </div>
+            <div class="term-full-name">Biological Heart & Vascular Age</div>
+            <div class="term-meaning">
+              The chronological age of an idealized healthy person who would share the patient's current cardiovascular risk.
+            </div>
+          </div>
+          <div class="term-shows tag-outcome">
+            <strong>What It Shows on Screen:</strong>
+            Shows if your arteries are older than your birthday. For example, a 48-year-old with a <strong>63-year-old vascular age</strong> can rejuvenate their arteries back to <strong>49 years</strong> with therapy.
+          </div>
+        </div>
+
+        <!-- 6. Kaplan-Meier Survival Curve -->
+        <div class="term-card" data-keywords="kaplan meier survival curve 10 year trajectory time horizon outcome">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Kaplan-Meier Curve</div>
+              <span class="term-badge">Visual Chart</span>
+            </div>
+            <div class="term-full-name">Event-Free Survival Probability Trajectory</div>
+            <div class="term-meaning">
+              A time-to-event graph showing the percentage of patients remaining free of heart attacks across Years 1 through 10.
+            </div>
+          </div>
+          <div class="term-shows tag-outcome">
+            <strong>What It Shows on Screen:</strong>
+            Displays two curves: a downward red line (untreated baseline) and an elevated cyan line (counterfactual therapy), illustrating cumulative life protection over 10 years.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: BIOMARKERS & LAB TESTS -->
+    <section class="term-section" data-cat="biomarkers">
+      <div class="section-title" style="color: var(--accent-cyan);">
+        <span>🧪</span> 2. Biomarkers, Lipids & Blood Tests
+      </div>
+      <p class="section-desc">The laboratory values that measure cholesterol, particles, inflammation, and blood sugar.</p>
+
+      <div class="term-grid">
+        <!-- LDL-C -->
+        <div class="term-card" data-keywords="ldl ldl-c bad cholesterol low density lipoprotein lipid">
+          <div>
+            <div class="term-header">
+              <div class="term-name">LDL-C</div>
+              <span class="term-badge">Lipid Biomarker</span>
+            </div>
+            <div class="term-full-name">Low-Density Lipoprotein Cholesterol ("Bad Cholesterol")</div>
+            <div class="term-meaning">
+              The primary cholesterol-carrying particle that penetrates and gets trapped inside coronary artery walls, driving atherosclerotic plaque formation.
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            Your primary cholesterol slider. Optimal is &lt;70 mg/dL for high-risk patients (&lt;55 mg/dL for very high risk).
+            <div class="term-normal-range">Target: &lt; 70 mg/dL (or &lt; 55 mg/dL with ASCVD)</div>
+          </div>
+        </div>
+
+        <!-- HDL-C -->
+        <div class="term-card" data-keywords="hdl hdl-c good cholesterol high density lipoprotein lipid">
+          <div>
+            <div class="term-header">
+              <div class="term-name">HDL-C</div>
+              <span class="term-badge">Lipid Biomarker</span>
+            </div>
+            <div class="term-full-name">High-Density Lipoprotein Cholesterol ("Good Cholesterol")</div>
+            <div class="term-meaning">
+              Scavenger particles that remove excess cholesterol from artery walls and return it to the liver (reverse cholesterol transport).
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            Higher is generally better. Low HDL (&lt;40 mg/dL in men, &lt;50 mg/dL in women) is a hallmark of South Asian atherogenic dyslipidemia.
+            <div class="term-normal-range">Normal: &gt; 40 mg/dL (Men) / &gt; 50 mg/dL (Women)</div>
+          </div>
+        </div>
+
+        <!-- Triglycerides -->
+        <div class="term-card" data-keywords="tg triglycerides fats blood lipids sugar triad">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Triglycerides (TG)</div>
+              <span class="term-badge">Lipid Biomarker</span>
+            </div>
+            <div class="term-full-name">Circulating Blood Fats / Glycerol Esters</div>
+            <div class="term-meaning">
+              Fats stored from excess calories and carbohydrates. High levels create small, dense LDL particles and promote arterial inflammation.
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            Elevated levels (&ge;150 mg/dL) trigger warnings and qualify the patient for Icosapent Ethyl (Vascepa) simulation.
+            <div class="term-normal-range">Optimal: &lt; 150 mg/dL (High: &ge; 200 mg/dL)</div>
+          </div>
+        </div>
+
+        <!-- ApoB -->
+        <div class="term-card" data-keywords="apob apolipoprotein b atherogenic particle count accurate">
+          <div>
+            <div class="term-header">
+              <div class="term-name">ApoB</div>
+              <span class="term-badge">Atherogenic Particle Count</span>
+            </div>
+            <div class="term-full-name">Apolipoprotein B-100</div>
+            <div class="term-meaning">
+              A structural protein tag attached to every single artery-clogging particle (LDL, VLDL, IDL, Lp(a)). It counts the <em>exact number of damaging particles</em> rather than just the cholesterol weight.
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            The most accurate marker of atherogenic particle concentration. Critical in patients with high triglycerides where standard LDL looks deceptively normal.
+            <div class="term-normal-range">Target: &lt; 80 mg/dL (High Risk: &lt; 65 mg/dL)</div>
+          </div>
+        </div>
+
+        <!-- Lp(a) -->
+        <div class="term-card" data-keywords="lpa lp(a) lipoprotein a genetic inherited south asian heart attack">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Lp(a)</div>
+              <span class="term-badge">Genetic Biomarker</span>
+            </div>
+            <div class="term-full-name">Lipoprotein(a) ["L-P-little-a"]</div>
+            <div class="term-meaning">
+              A genetically inherited, highly dangerous particle resembling an LDL particle with an attached "apolipoprotein(a)" tail that causes both plaque buildup and blood clots. Unaffected by standard diet or exercise.
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            Elevated (&ge;125 nmol/L or &ge;50 mg/dL) in 30-40% of South Asians. Triggers risk-enhancing multipliers in the digital twin.
+            <div class="term-normal-range">Normal: &lt; 75 nmol/L (&lt; 30 mg/dL)</div>
+          </div>
+        </div>
+
+        <!-- SBP & DBP -->
+        <div class="term-card" data-keywords="sbp dbp blood pressure systolic diastolic hypertension mmhg">
+          <div>
+            <div class="term-header">
+              <div class="term-name">SBP & DBP</div>
+              <span class="term-badge">Hemodynamics</span>
+            </div>
+            <div class="term-full-name">Systolic & Diastolic Blood Pressure (mmHg)</div>
+            <div class="term-meaning">
+              <strong>SBP (Systolic)</strong> is the peak pressure in arteries when the heart contracts. <strong>DBP (Diastolic)</strong> is the resting pressure between beats. High SBP causes endothelial shear injury.
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            Measured in mmHg (e.g. 140/90). Lowering SBP by 10 mmHg produces a ~20% reduction in heart attack and stroke risk.
+            <div class="term-normal-range">Normal: &lt; 120/80 mmHg</div>
+          </div>
+        </div>
+
+        <!-- HbA1c -->
+        <div class="term-card" data-keywords="hba1c glucose diabetes blood sugar glycated hemoglobin">
+          <div>
+            <div class="term-header">
+              <div class="term-name">HbA1c</div>
+              <span class="term-badge">Glycemic Control</span>
+            </div>
+            <div class="term-full-name">Hemoglobin A1c (Glycated Hemoglobin)</div>
+            <div class="term-meaning">
+              Measures the average percentage of blood sugar attached to hemoglobin over the past 3 months (90 days).
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            Identifies normal (&lt;5.7%), prediabetes (5.7-6.4%), and type 2 diabetes (&ge;6.5%). Activates SGLT2i / GLP-1 RA cardiometabolic benefits.
+            <div class="term-normal-range">Normal: &lt; 5.7% (Diabetes: &ge; 6.5%)</div>
+          </div>
+        </div>
+
+        <!-- eGFR -->
+        <div class="term-card" data-keywords="egfr kidney renal filtration uacr creatinine">
+          <div>
+            <div class="term-header">
+              <div class="term-name">eGFR</div>
+              <span class="term-badge">Renal Biomarker</span>
+            </div>
+            <div class="term-full-name">Estimated Glomerular Filtration Rate (mL/min/1.73m²)</div>
+            <div class="term-meaning">
+              Measures how well the kidneys filter toxins and waste from the blood. Poor kidney function accelerates arterial stiffening and vascular calcification.
+            </div>
+          </div>
+          <div class="term-shows tag-biomarker">
+            <strong>What It Shows on Screen:</strong>
+            Used in the 2024 AHA PREVENT™ equations. Values &lt;60 mL/min indicate chronic kidney disease and elevate heart risk.
+            <div class="term-normal-range">Normal: &ge; 90 mL/min/1.73m²</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: DRUGS & MEDICATIONS -->
+    <section class="term-section" data-cat="drugs">
+      <div class="section-title" style="color: var(--accent-indigo);">
+        <span>💊</span> 3. Drugs, Molecules & Interventions
+      </div>
+      <p class="section-desc">The pharmaceutical therapies tested in the counterfactual simulation sandbox.</p>
+
+      <div class="term-grid">
+        <!-- Statins -->
+        <div class="term-card" data-keywords="statin atorvastatin rosuvastatin ldl cholesterol hmg coa reductase">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Statins</div>
+              <span class="term-badge">HMG-CoA Reductase Inhibitors</span>
+            </div>
+            <div class="term-full-name">Atorvastatin, Rosuvastatin, Simvastatin</div>
+            <div class="term-meaning">
+              The foundation of cholesterol management. Blocks the liver enzyme (HMG-CoA reductase) responsible for making cholesterol, forcing the liver to clear LDL from the bloodstream.
+            </div>
+          </div>
+          <div class="term-shows tag-drug">
+            <strong>What It Shows on Screen:</strong>
+            Intensity levels: <strong>Low</strong> (-30% LDL), <strong>Moderate</strong> (-38% LDL), and <strong>High</strong> (-52% LDL, e.g. Atorvastatin 80mg or Rosuvastatin 40mg).
+          </div>
+        </div>
+
+        <!-- Ezetimibe -->
+        <div class="term-card" data-keywords="ezetimibe zetia npc1l1 intestinal absorption ldl">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Ezetimibe</div>
+              <span class="term-badge">Cholesterol Absorption Inhibitor</span>
+            </div>
+            <div class="term-full-name">NPC1L1 Receptor Inhibitor (Zetia)</div>
+            <div class="term-meaning">
+              A daily oral pill that blocks the NPC1L1 transporter in the small intestine, preventing dietary and biliary cholesterol from being absorbed into the blood.
+            </div>
+          </div>
+          <div class="term-shows tag-drug">
+            <strong>What It Shows on Screen:</strong>
+            Adds an extra <strong>19% reduction</strong> in residual LDL-C when combined with statins.
+          </div>
+        </div>
+
+        <!-- PCSK9 Inhibitors -->
+        <div class="term-card" data-keywords="pcsk9 evolocumab alirocumab inclisiran repatha praluent injection">
+          <div>
+            <div class="term-header">
+              <div class="term-name">PCSK9 Inhibitors / siRNA</div>
+              <span class="term-badge">Monoclonal Antibodies / RNAi</span>
+            </div>
+            <div class="term-full-name">Evolocumab (Repatha), Alirocumab (Praluent), Inclisiran (Leqvio)</div>
+            <div class="term-meaning">
+              Inactivates PCSK9, a protein that destroys LDL receptors. By saving these receptors, the liver clears vast amounts of LDL cholesterol out of the blood.
+            </div>
+          </div>
+          <div class="term-shows tag-drug">
+            <strong>What It Shows on Screen:</strong>
+            Provides a powerful <strong>58% reduction</strong> in LDL-C and a <strong>28% reduction</strong> in Lp(a).
+          </div>
+        </div>
+
+        <!-- Icosapent Ethyl -->
+        <div class="term-card" data-keywords="icosapent ethyl vascepa epa omega 3 triglycerides reduce-it">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Icosapent Ethyl</div>
+              <span class="term-badge">Purified EPA Ethyl Ester</span>
+            </div>
+            <div class="term-full-name">Highly Purified Eicosapentaenoic Acid (Vascepa)</div>
+            <div class="term-meaning">
+              A prescription-grade, ultra-pure Omega-3 fatty acid (not standard fish oil) that stabilizes plaque membranes and reduces arterial inflammation in patients with elevated triglycerides.
+            </div>
+          </div>
+          <div class="term-shows tag-drug">
+            <strong>What It Shows on Screen:</strong>
+            Applies a proven <strong>25% relative risk reduction</strong> in cardiovascular events based on the landmark REDUCE-IT trial.
+          </div>
+        </div>
+
+        <!-- Bempedoic Acid -->
+        <div class="term-card" data-keywords="bempedoic acid nexletol acl inhibitor statin intolerance muscle ache">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Bempedoic Acid</div>
+              <span class="term-badge">ATP Citrate Lyase Inhibitor</span>
+            </div>
+            <div class="term-full-name">Nexletol / Nexlizet</div>
+            <div class="term-meaning">
+              A prodrug that blocks cholesterol synthesis upstream of statins. Because it is only activated in the liver and not in skeletal muscle, it does not cause statin-induced muscle aches.
+            </div>
+          </div>
+          <div class="term-shows tag-drug">
+            <strong>What It Shows on Screen:</strong>
+            Provides an <strong>18% LDL-C reduction</strong> and 15% MACE risk reduction (CLEAR Outcomes trial) for statin-intolerant patients.
+          </div>
+        </div>
+
+        <!-- SGLT2i & GLP-1 RA -->
+        <div class="term-card" data-keywords="sglt2 glp1 empagliflozin dapagliflozin semaglutide ozempic jardiance">
+          <div>
+            <div class="term-header">
+              <div class="term-name">SGLT2i / GLP-1 RA</div>
+              <span class="term-badge">Cardiometabolic Therapies</span>
+            </div>
+            <div class="term-full-name">Empagliflozin, Dapagliflozin, Semaglutide, Tirzepatide</div>
+            <div class="term-meaning">
+              Breakthrough cardiometabolic medications that improve glucose, promote renal sodium excretion, reduce visceral fat, and protect against heart failure and kidney decline.
+            </div>
+          </div>
+          <div class="term-shows tag-drug">
+            <strong>What It Shows on Screen:</strong>
+            Simulates a <strong>14% reduction</strong> in major cardiac events, drops HbA1c by ~0.85%, and reduces SBP by 3.5 mmHg.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: DIGITAL TWIN & SYSTEM CONCEPTS -->
+    <section class="term-section" data-cat="concepts">
+      <div class="section-title" style="color: var(--accent-purple);">
+        <span>🧠</span> 4. Digital Twin & Simulation Concepts
+      </div>
+      <p class="section-desc">Key methodologies and models used to build the predictive simulation.</p>
+
+      <div class="term-grid">
+        <!-- Digital Twin -->
+        <div class="term-card" data-keywords="digital twin in silico simulation computational model replica">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Digital Twin</div>
+              <span class="term-badge">Core Concept</span>
+            </div>
+            <div class="term-full-name">In Silico Physiological Model</div>
+            <div class="term-meaning">
+              A software-based, mathematical representation of a physical patient's cardiovascular system that simulates future clinical trajectories and therapeutic responses.
+            </div>
+          </div>
+          <div class="term-shows tag-concept">
+            <strong>What It Shows on Screen:</strong>
+            The central framework of the entire application that synchronizes inputs, risk engines, and visual outputs in real time.
+          </div>
+        </div>
+
+        <!-- Counterfactual -->
+        <div class="term-card" data-keywords="counterfactual what if alternative scenario treatment intervention">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Counterfactual</div>
+              <span class="term-badge">Causal Inference</span>
+            </div>
+            <div class="term-full-name">"What-If" Interventional State</div>
+            <div class="term-meaning">
+              In causal statistics, a counterfactual answers: <em>"What would have happened to this patient if they had received Treatment B instead of Treatment A?"</em>
+            </div>
+          </div>
+          <div class="term-shows tag-concept">
+            <strong>What It Shows on Screen:</strong>
+            The right-side sandbox controls that let you test hypothetical medication combinations without altering the patient's baseline truth.
+          </div>
+        </div>
+
+        <!-- Ceteris Paribus -->
+        <div class="term-card" data-keywords="ceteris paribus confounder feature isolation sensitivity partial derivative">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Ceteris Paribus</div>
+              <span class="term-badge">Confounder Isolation</span>
+            </div>
+            <div class="term-full-name">"All Other Things Being Equal"</div>
+            <div class="term-meaning">
+              A scientific principle where every other patient variable (Age, BP, Sex, Smoking, CAC) is frozen at 100% static values while varying only one biomarker (e.g. LDL-C) to evaluate its isolated effect.
+            </div>
+          </div>
+          <div class="term-shows tag-concept">
+            <strong>What It Shows on Screen:</strong>
+            Ensures that the risk changes you see are purely caused by the specific drug or biomarker change, eliminating confounding variables.
+          </div>
+        </div>
+
+        <!-- CTT Meta-Analyses -->
+        <div class="term-card" data-keywords="ctt cholesterol treatment trialists meta analysis law 22 percent drop">
+          <div>
+            <div class="term-header">
+              <div class="term-name">CTT Meta-Analyses</div>
+              <span class="term-badge">Evidence Base</span>
+            </div>
+            <div class="term-full-name">Cholesterol Treatment Trialists' Collaboration</div>
+            <div class="term-meaning">
+              A world-standard meta-analysis of over 170,000 trial participants proving that every <strong>38.67 mg/dL (1.0 mmol/L)</strong> drop in LDL-C yields a linear <strong>22% reduction</strong> in major vascular events.
+            </div>
+          </div>
+          <div class="term-shows tag-concept">
+            <strong>What It Shows on Screen:</strong>
+            The mathematical formula powering all cholesterol-lowering risk transitions in the simulation engine (<code>HR = 0.78^(ΔLDL / 38.67)</code>).
+          </div>
+        </div>
+
+        <!-- South Asian Dyslipidemia Triad -->
+        <div class="term-card" data-keywords="south asian triad atherogenic dyslipidemia high tg low hdl high apob masala">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Atherogenic Lipid Triad</div>
+              <span class="term-badge">South Asian Phenotype</span>
+            </div>
+            <div class="term-full-name">High TG + Low HDL + High ApoB</div>
+            <div class="term-meaning">
+              The signature lipid pattern in South Asians characterized by elevated Triglycerides, depressed HDL-C, and high concentrations of small, dense LDL particles reflected in high ApoB.
+            </div>
+          </div>
+          <div class="term-shows tag-concept">
+            <strong>What It Shows on Screen:</strong>
+            Highlighted in the <strong>Rajesh Kumar</strong> preset case, demonstrating why South Asians suffer premature heart attacks even with "normal-looking" total cholesterol.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: IMAGING & ARTERIAL PHYSIOLOGY -->
+    <section class="term-section" data-cat="imaging">
+      <div class="section-title" style="color: var(--accent-rose);">
+        <span>🔬</span> 5. Imaging & Arterial Physiology
+      </div>
+      <p class="section-desc">Visualizations and anatomical indicators of plaque build-up inside heart arteries.</p>
+
+      <div class="term-grid">
+        <!-- CAC Score -->
+        <div class="term-card" data-keywords="cac coronary artery calcium agatston score ct scan calcification plaque">
+          <div>
+            <div class="term-header">
+              <div class="term-name">CAC Score</div>
+              <span class="term-badge">CT Imaging</span>
+            </div>
+            <div class="term-full-name">Coronary Artery Calcium (Agatston Units)</div>
+            <div class="term-meaning">
+              A non-invasive CT scan score measuring the amount of hardened, calcified plaque in the coronary arteries of the heart.
+            </div>
+          </div>
+          <div class="term-shows tag-imaging">
+            <strong>What It Shows on Screen:</strong>
+            <strong>0:</strong> Low risk (multiplier 0.45x); <strong>1-99:</strong> Mild; <strong>100-399:</strong> Moderate (1.65x); <strong>&ge;400:</strong> Extensive plaque burden (2.4x risk multiplier).
+          </div>
+        </div>
+
+        <!-- Lumen Stenosis -->
+        <div class="term-card" data-keywords="lumen stenosis cross section plaque narrowing artery blockage opening">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Lumen Stenosis (%)</div>
+              <span class="term-badge">Vascular Anatomy</span>
+            </div>
+            <div class="term-full-name">Arterial Cross-Section Narrowing</div>
+            <div class="term-meaning">
+              The percentage of the internal artery opening (the lumen) obstructed by atherosclerotic plaque.
+            </div>
+          </div>
+          <div class="term-shows tag-imaging">
+            <strong>What It Shows on Screen:</strong>
+            Rendered in the interactive <strong>3D Vascular Lumen Visualizer</strong>, illustrating how lipid-lowering regression opens the arterial channel from 55% stenosis to 25% stenosis.
+          </div>
+        </div>
+
+        <!-- Fibrous Cap -->
+        <div class="term-card" data-keywords="fibrous cap necrotic lipid core plaque rupture heart attack stabilization">
+          <div>
+            <div class="term-header">
+              <div class="term-name">Fibrous Cap</div>
+              <span class="term-badge">Histology</span>
+            </div>
+            <div class="term-full-name">Protective Smooth Muscle & Collagen Layer</div>
+            <div class="term-meaning">
+              The protective structural layer separating the soft, dangerous necrotic lipid core from circulating blood. A thin cap ruptures easily, causing sudden heart attacks.
+            </div>
+          </div>
+          <div class="term-shows tag-imaging">
+            <strong>What It Shows on Screen:</strong>
+            Visualized in the histological artery cross-section showing cap thickening and stabilization under statin and PCSK9 therapy.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      CardioTwin Clinical & Technical Documentation · Grounded in ACC/AHA, ESC, and CTT Evidence Bases
+    </footer>
+  </div>
+
+  <script>
+    // Live Search Functionality
+    function filterTerms() {
+      const query = document.getElementById("glossarySearch").value.toLowerCase().trim();
+      const cards = document.querySelectorAll(".term-card");
+      const sections = document.querySelectorAll(".term-section");
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const keywords = card.getAttribute("data-keywords") || "";
+        if (text.includes(query) || keywords.includes(query)) {
+          card.style.display = "flex";
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      // Hide empty sections
+      sections.forEach(sec => {
+        const visibleCards = sec.querySelectorAll('.term-card[style="display: flex;"], .term-card:not([style*="display: none"])');
+        if (query && visibleCards.length === 0) {
+          sec.style.display = "none";
+        } else {
+          sec.style.display = "block";
+        }
+      });
+    }
+
+    // Category Button Filters
+    function filterCategory(cat, btn) {
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const sections = document.querySelectorAll(".term-section");
+      sections.forEach(sec => {
+        if (cat === "all" || sec.getAttribute("data-cat") === cat) {
+          sec.style.display = "block";
+        } else {
+          sec.style.display = "none";
+        }
+      });
+
+      // Clear search input on category switch
+      document.getElementById("glossarySearch").value = "";
+      document.querySelectorAll(".term-card").forEach(c => c.style.display = "flex");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "CardioTwin - Cardiovascular & Hyperlipidemia Digital Twin",
+  "description": "Interactive Cardiovascular & Hyperlipidemia Digital Twin featuring biomarker inputs, ASCVD and lipid risk prediction engine, real-time counterfactual treatment simulation, vascular anatomy visualizer, and AI clinical synthesis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
